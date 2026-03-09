@@ -166,6 +166,8 @@ function startStudentPolling() {
   // ポーリングなし：ページ読み込み時に1回だけ取得
 }
 
+let studentRendered = false; // 学生画面は一度だけ描画する
+
 async function fetchCurrentSession() {
   try {
     const r = await gasGet({action:"currentSession"});
@@ -174,7 +176,10 @@ async function fetchCurrentSession() {
     } else {
       session = null;
     }
-    if (currentMode === "student" && !isSubmitting && !isEditing) renderStudent();
+    if (currentMode === "student" && !studentRendered) {
+      studentRendered = true;
+      renderStudent();
+    }
     updateHeader();
   } catch(e) { console.error(e); }
 }
