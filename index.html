@@ -103,7 +103,6 @@ const locked = urlParam === "student" || urlParam === "admin";
 let currentMode = urlParam === "admin" ? "admin" : "student";
 let session = null;
 let pollTimer = null;
-let isSubmitting = false;
 let isSubmitting = false; // 送信中はポーリングで画面を上書きしない
 
 // ── GAS通信 ──────────────────────────────────────────
