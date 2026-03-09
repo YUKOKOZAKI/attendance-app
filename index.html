@@ -162,9 +162,8 @@ function render() {
 // ── 学生側 ──────────────────────────────────────────
 function startStudentPolling() {
   if (urlParam !== "student") return;
-  if (pollTimer) clearInterval(pollTimer);
   fetchCurrentSession();
-  pollTimer = setInterval(fetchCurrentSession, 10000);
+  // ポーリングなし：ページ読み込み時に1回だけ取得
 }
 
 async function fetchCurrentSession() {
@@ -200,7 +199,7 @@ function renderStudent() {
     return `<div class="phase-dot ${session.phase===k?'active':''}">${p.label}</div>`;
   }).join("");
   bar.style.display = "flex";
-  bar.innerHTML = phaseDots;
+  bar.innerHTML = phaseDots + `<button onclick="window.location.reload()" style="padding:4px 10px;border-radius:20px;border:1px solid #ccc;background:#fff;font-size:11px;cursor:pointer;margin-left:4px">🔄</button>`;
 
   if (session.phase === "arrive")     renderArriveForm(app);
   else if (session.phase === "comment1") renderCommentForm(app, "comment1");
