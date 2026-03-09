@@ -104,6 +104,7 @@ let currentMode = urlParam === "admin" ? "admin" : "student";
 let session = null;
 let pollTimer = null;
 let isSubmitting = false; // 送信中はポーリングで画面を上書きしない
+let isEditing = false;   // 入力中はポーリングで画面を上書きしない
 
 // ── GAS通信 ──────────────────────────────────────────
 async function gasPost(action, data) {
@@ -174,7 +175,7 @@ async function fetchCurrentSession() {
     } else {
       session = null;
     }
-    if (currentMode === "student" && !isSubmitting) renderStudent();
+    if (currentMode === "student" && !isSubmitting && !isEditing) renderStudent();
     updateHeader();
   } catch(e) { console.error(e); }
 }
@@ -211,12 +212,14 @@ function studentFieldsHTML(idPrefix) {
   return `
     <div class="field">
       <label>学籍番号 <span class="hint">※半角数字のみ（例: 20250001）</span></label>
-      <input type="text" id="${idPrefix}-sid" inputmode="numeric" maxlength="10" placeholder="20250001" autocomplete="off">
+      <input type="text" id="${idPrefix}-sid" inputmode="numeric" maxlength="10" placeholder="20250001" autocomplete="off"
+        onfocus="isEditing=true" onblur="isEditing=false">
       <div class="err" id="${idPrefix}-sid-err"></div>
     </div>
     <div class="field">
       <label>氏名</label>
-      <input type="text" id="${idPrefix}-name" maxlength="30" placeholder="山田太郎" autocomplete="off">
+      <input type="text" id="${idPrefix}-name" maxlength="30" placeholder="山田太郎" autocomplete="off"
+        onfocus="isEditing=true" onblur="isEditing=false">
       <div class="err" id="${idPrefix}-name-err"></div>
     </div>
   `;
@@ -304,7 +307,7 @@ function renderCommentForm(app, phase) {
     ${studentFieldsHTML(pfx)}
     <div class="field">
       <label>コメント内容</label>
-      <textarea id="${pfx}-text" rows="5" placeholder="今日の授業の内容について記入してください..."></textarea>
+      <textarea id="${pfx}-text" rows="5" placeholder="今日の授業の内容について記入してください..." onfocus="isEditing=true" onblur="isEditing=false"></textarea>
       <div class="char-counter" id="${pfx}-counter" style="color:#aaa">0字（30字以上推奨）</div>
       <div class="err" id="${pfx}-text-err"></div>
     </div>
@@ -348,7 +351,7 @@ function renderImpressionForm(app) {
     ${studentFieldsHTML("imp")}
     <div class="field">
       <label>今日の授業の感想</label>
-      <textarea id="imp-text" rows="6" style="min-height:140px" placeholder="今日の授業全体を通じての感想・学びを記入してください..."></textarea>
+      <textarea id="imp-text" rows="6" style="min-height:140px" placeholder="今日の授業全体を通じての感想・学びを記入してください..." onfocus="isEditing=true" onblur="isEditing=false"></textarea>
       <div class="char-counter" id="imp-counter" style="color:#aaa">0字（50字以上推奨）</div>
       <div class="err" id="imp-text-err"></div>
     </div>
